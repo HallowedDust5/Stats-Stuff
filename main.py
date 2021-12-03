@@ -83,6 +83,8 @@ RANGE = MAX - MIN
 #Displays magnitude histogram
 def magHist(vec_distro:list):
 
+    fig,ax = plt.subplots()
+
     x_comps = [vector.x for vector in vec_distro]
     y_comps = [vector.y for vector in vec_distro]
 
@@ -97,6 +99,9 @@ def magHist(vec_distro:list):
             step = step
             )
     )
+    ax.set_ylabel('Frequency')
+    ax.set_xlabel('Distance from Average Vector')
+    ax.set_title('Frequency Distribution from Average Vector')
     plt.show()
     
     #Displays scatterplot with average vector highlighted
@@ -115,6 +120,11 @@ def scatter(vec_distro:list):
     ax.spines['bottom'].set_position('center')
     ax.spines['right'].set_color('none')
     ax.spines['top'].set_color('none')
+
+    ax.set_ylabel('Lib/Auth',loc = 'top')
+    ax.set_xlabel('Left/Right', loc = 'left')
+    ax.set_title('Political Vectors')
+
     plt.show()
 
 def comps_hist(comp_distro:list, target_vec_comp:int, axis:str):
@@ -122,13 +132,19 @@ def comps_hist(comp_distro:list, target_vec_comp:int, axis:str):
     disp_distro = [v-target_vec_comp for v in comp_distro]
     fig,ax = plt.subplots()
 
+
     if axis == 'x':
-        ax.set_xlim(MIN,MAX)
+        ax.set_xlabel('Left/Right')
     elif axis == 'y':
-        ax.set_ylim(MIN,MAX)
+        ax.set_xlabel('Lib/Auth')
     else:
         pass
-    
+
+
+    ax.set_ylabel('Frequency')
+    ax.set_title(f'{axis.upper()} Component Frequency Distribution')
+    ax.set_xlim(MIN,MAX)
+
     plt.hist(disp_distro)
     plt.show()
 
@@ -149,6 +165,10 @@ def heatmap(vec_distribution:list, target_vec:Vector2D,hexsize:int):
     ax.spines['bottom'].set_position('center')
     ax.spines['right'].set_color('none')
     ax.spines['top'].set_color('none')
+
+    ax.set_ylabel('Lib/Auth', loc = 'top')
+    ax.set_xlabel('Left/Right', loc = 'left')
+    ax.set_title('Political Vectors Heatmap')
 
     plt.axis()
 
@@ -174,6 +194,10 @@ def overlayScatter(control_vecs:list, bias_vecs:list):
     ax.spines['bottom'].set_position('center')
     ax.spines['right'].set_color('none')
     ax.spines['top'].set_color('none')
+
+    ax.set_ylabel('Lib/Auth', loc = 'top')
+    ax.set_xlabel('Left/Right', loc = 'left')
+    ax.set_title('Political Vectors')
     # plt.axis()
 
 
@@ -221,11 +245,23 @@ for col in bias_df.columns[1:]:
 toPoliVec(control_df,'CONTROL')
 toPoliVec(bias_df,'BIAS')
 #%%
+
+
 magHist(bias_df.PVecs.tolist())
-overlayScatter(bias_df.PVecs.tolist(),control_df.PVecs.tolist())
 heatmap(bias_df.PVecs.tolist(),Vector2D(0,0),15)
 scatter(bias_df.PVecs.tolist())
 comps_hist([v.x for v in bias_df.PVecs.tolist()],0,'x')
-#%%
-comps_hist([v.y for v in bias_df.PVecs.tolist()],0,'x')
+comps_hist([v.y for v in bias_df.PVecs.tolist()],0,'y')
 
+
+#%%
+magHist(control_df.PVecs.tolist())
+heatmap(control_df.PVecs.tolist(),Vector2D(0,0),15)
+scatter(control_df.PVecs.tolist())
+comps_hist([v.x for v in control_df.PVecs.tolist()],0,'x')
+comps_hist([v.y for v in control_df.PVecs.tolist()],0,'y')
+
+
+#%%
+
+overlayScatter(bias_df.PVecs.tolist(),control_df.PVecs.tolist())
